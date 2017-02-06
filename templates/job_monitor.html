@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Job monitor testing</title>
+        link
+    </head>
+    <body>
+        <h2>Jobs test</h2>
+        <h3>Open the console to check the status</h3>
+
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function () {
+
+                var jobId = '';
+
+                function checkJob(jobId) {
+                    $.ajax({
+                        url : '/checkjob/' + jobId,
+                        type: 'GET',
+                        success : function(data) {
+                            console.log(data);
+
+                            if (data.status !== 'finished') {
+                                setTimeout(checkJob, 3000, jobId);
+                            }
+                        },
+                        dataType : 'json'
+                    });
+                }
+
+                $.ajax({
+                    url : '/dojob',
+                    type: 'GET',
+                    success : function(data) {
+                        console.log(data);
+                        checkJob(data.jobId);
+                    },
+                    dataType : 'json'
+                });
+            });
+        </script>
+    </body>
+</html>
