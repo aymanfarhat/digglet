@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     var jobId = '',
         jobStatus = '';
 
@@ -11,10 +10,12 @@ $(document).ready(function() {
                 jobStatus = data.status;
                 $('#status').text(jobStatus);
 
-                console.log(data);
-
-                if (data.status !== 'finished' || data.status !== 'failed') {
+                if (data.status !== 'finished' && data.status !== 'failed') {
                     setTimeout(checkJob, 3000, jobId);
+                } else {
+                    for (var i = 0; i < data.result.length; i++) {
+                        $('#resultContent').append('<tr><td>Alan Watts</td><td>allan@watts.com</td><td>35</td></tr>');
+                    }
                 }
             },
             dataType: 'json'
