@@ -7,22 +7,6 @@ import gmail
 
 app = flask.Flask(__name__, static_url_path='/static')
 
-@app.route('/dojob')
-def gofetch():
-    q = Queue(connection=Redis())
-    job = q.enqueue(gmail.process_user_messages_async, flask.session['credentials'])
-
-    return flask.jsonify({'jobId': job.get_id()})
-
-
-@app.route('/checkjob/<job_id>')
-def checkjob(job_id):
-    q = Queue(connection=Redis())
-
-    job = q.fetch_job(job_id)
-
-    return flask.jsonify({'result': job.return_value, 'status': job.get_status()})
-
 
 @app.route('/')
 def index():
@@ -36,16 +20,6 @@ def index():
 
     else:
         return render_template('job_monitor.html')
-
-
-@app.route('/threads/')
-@app.route('/threads/<page_token>')
-def threads(page_token=None):
-    response = gmail.get_messages(flask.session['credentials'], page_token)
-
-    filtered = gmail.get_emails_from_messages(response['datalist'])
-
-    return flask.jsonify(data=filtered, nextPageToken=response['nextPageToken'], size=response['resultSizeEstimate'])
 
 
 @app.route('/oauth2callback')
@@ -63,6 +37,23 @@ def oauth2callback():
         flask.session['credentials'] = credentials.to_json()
 
     return flask.redirect(flask.url_for('index'))
+
+
+@app.route('/dojob')
+def gofetch():
+    q = Queue(connection=Redis())
+    job = q.enqueue(gmail.process_user_messages_async, flask.session['credentials'])
+
+    return flask.jsonify({'jobId': job.get_id()})
+
+
+@app.route('/checkjob/<job_id>')
+def checkjob(job_id):
+    q = Queue(connection=Redis())
+
+    job = q.fetch_job(job_id)
+
+    return flask.jsonify({'result': job.return_value, 'status': job.get_status()})
 
 
 if __name__ == '__main__':
