@@ -84,8 +84,9 @@ def process_user_messages_async(credentials):
 
     while response['nextPageToken']:
         response = get_messages(credentials, response['nextPageToken'])
-        email_list = get_emails_from_messages(response['datalist'])
 
-        emails += email_list
+        if response:
+            email_list = get_emails_from_messages(response['datalist'])
+            emails += email_list
 
     return emails
