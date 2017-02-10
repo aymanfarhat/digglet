@@ -5,7 +5,7 @@ from apiclient import discovery
 from apiclient.http import BatchHttpRequest
 from oauth2client import client
 
-from jq import jq
+from email.utils import parseaddr
 
 
 def get_credentials(flask_sess_cred):
@@ -71,7 +71,15 @@ def get_emails_from_messages(messages):
     list of gmail messages"""
 
     try:
-        filtered = list(set(jq('.data[].payload.headers[] | select(.name == \"From\").value').transform({'data': messages}, multiple_output=True)))
+        filtered = []
+
+        for message in messages:
+            if message:
+                for header in message['payload']['headers']:
+                    if header['name'] == 'From':
+                        header_val = parseaddr(header['value'])
+                        filtered.append({'name': header_val[0], 'email': header_val[1]})
+
     except ValueError:
         filtered = None
 

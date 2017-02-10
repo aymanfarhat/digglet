@@ -14,7 +14,11 @@ $(document).ready(function() {
                     setTimeout(checkJob, 3000, jobId);
                 } else {
                     for (var i = 0; i < data.result.length; i++) {
-                        $('#resultContent').append('<tr><td>Alan Watts</td><td>allan@watts.com</td><td>35</td></tr>');
+                        var name = data.result[i].name,
+                            email = data.result[i].email
+                        if (name.length <= 15 || email.length <= 15) {
+                            $('#resultContent').append('<tr><td>' + name + '</td><td>' + email + '</td><td>35</td></tr>');
+                        }
                     }
                 }
             },
