@@ -87,6 +87,8 @@ def process_user_messages_async(credentials):
 
         if response:
             email_list = get_emails_from_messages(response['datalist'])
-            emails += email_list
+
+            if email_list:
+                emails += email_list
 
     return emails
