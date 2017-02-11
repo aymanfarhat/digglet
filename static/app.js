@@ -4,7 +4,7 @@ $(document).ready(function() {
 
     function checkJob(jobId) {
         $.ajax({
-            url: '/checkjob/' + jobId,
+            url: '/checkstatus/' + jobId,
             type: 'GET',
             success: function(data) {
                 jobStatus = data.status;
@@ -31,7 +31,7 @@ $(document).ready(function() {
     }
 
     $.ajax({
-        url: '/dojob',
+        url: '/fetchmails',
         type: 'GET',
         success: function(data) {
             console.log(data);

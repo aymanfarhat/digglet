@@ -8,9 +8,16 @@ import gmail
 app = flask.Flask(__name__, static_url_path='/static')
 
 
-
 @app.route('/')
 def index():
+    if 'credentials' in flask.session:
+        return flask.redirect(flask.url_for('dashboard'))
+
+    return render_template('index.html')
+
+
+@app.route('/dashboard')
+def dashboard():
     if 'credentials' not in flask.session:
         return flask.redirect(flask.url_for('oauth2callback'))
 
@@ -20,7 +27,7 @@ def index():
         return flask.redirect(flask.url_for('oauth2callback'))
 
     else:
-        return render_template('job_monitor.html')
+        return render_template('dashboard.html')
 
 
 @app.route('/oauth2callback')
@@ -37,19 +44,19 @@ def oauth2callback():
         credentials = flow.step2_exchange(auth_code)
         flask.session['credentials'] = credentials.to_json()
 
-    return flask.redirect(flask.url_for('index'))
+    return flask.redirect(flask.url_for('dashboard'))
 
 
-@app.route('/dojob')
-def gofetch():
+@app.route('/fetchmails')
+def fetchmails():
     q = Queue(connection=Redis())
     job = q.enqueue(gmail.process_user_messages_async, flask.session['credentials'])
 
     return flask.jsonify({'jobId': job.get_id()})
 
 
-@app.route('/checkjob/<job_id>')
-def checkjob(job_id):
+@app.route('/checkstatus/<job_id>')
+def checkstatus(job_id):
     q = Queue(connection=Redis())
 
     job = q.fetch_job(job_id)
