@@ -13,11 +13,15 @@ $(document).ready(function() {
                 if (data.status !== 'finished' && data.status !== 'failed') {
                     setTimeout(checkJob, 3000, jobId);
                 } else {
+                    console.log(data.result);
+
                     for (var i = 0; i < data.result.length; i++) {
                         var name = data.result[i].name,
-                            email = data.result[i].email
+                            email = data.result[i].email,
+                            count = data.result[i].count;
+
                         if (name.length <= 15 || email.length <= 15) {
-                            $('#resultContent').append('<tr><td>' + name + '</td><td>' + email + '</td><td>35</td></tr>');
+                            $('#resultContent').append('<tr><td>'+ name +'</td><td>'+ email +'</td><td>'+ count +'</td></tr>');
                         }
                     }
                 }

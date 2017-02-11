@@ -70,20 +70,20 @@ def get_emails_from_messages(messages):
     """Returns the list of contacts and their email addresses from a
     list of gmail messages"""
 
-    try:
-        filtered = []
+    contacts = {}
 
-        for message in messages:
-            if message:
-                for header in message['payload']['headers']:
-                    if header['name'] == 'From':
-                        header_val = parseaddr(header['value'])
-                        filtered.append({'name': header_val[0], 'email': header_val[1]})
+    for message in messages:
+        if message:
+            for header in message['payload']['headers']:
+                if header['name'] == 'From':
+                    header_val = parseaddr(header['value'])
 
-    except ValueError:
-        filtered = None
+                    if header_val in contacts:
+                        contacts[header_val] += 1
+                    else:
+                        contacts[header_val] = 1
 
-    return filtered
+    return contacts
 
 
 def process_user_messages_async(credentials):
@@ -96,7 +96,17 @@ def process_user_messages_async(credentials):
         if response:
             email_list = get_emails_from_messages(response['datalist'])
 
-            if email_list:
-                emails += email_list
+            for k, v in email_list.items():
+                if k in emails:
+                    emails[k] += 1
+                else:
+                    emails[k] = 1
 
-    return emails
+    reply_data = []
+
+    for email, count in emails.items():
+
+        if len(email) == 2:
+            reply_data.append({'name': email[0], 'email': email[1], 'count': count})
+
+    return sorted(reply_data, key=lambda k: k['count'], reverse=True)
