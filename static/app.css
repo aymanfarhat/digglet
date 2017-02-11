@@ -1,4 +1,16 @@
 
+nav, nav ul a, nav .brand-logo {
+    color: #444;
+}
+
+nav .brand-logo img {
+    margin-top: 5px;
+}
+
+.brand-logo span {
+    vertical-align: super;
+    margin-left: 10px;
+}
 .statMessage {
     text-align:center;
     padding: 5px;

@@ -13,8 +13,6 @@ $(document).ready(function() {
                 if (data.status !== 'finished' && data.status !== 'failed') {
                     setTimeout(checkJob, 3000, jobId);
                 } else {
-                    console.log(data.result);
-
                     for (var i = 0; i < data.result.length; i++) {
                         var name = data.result[i].name,
                             email = data.result[i].email,
