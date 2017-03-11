@@ -7,12 +7,20 @@ import gmail
 
 app = flask.Flask(__name__, static_url_path='/static')
 
+
 @app.route('/')
 def index():
     if 'credentials' in flask.session:
         return flask.redirect(flask.url_for('dashboard'))
 
     return render_template('index.html')
+
+
+@app.route('/logout')
+def logout():
+    flask.session.clear()
+
+    return flask.redirect(flask.url_for('index'))
 
 
 @app.route('/dashboard')
