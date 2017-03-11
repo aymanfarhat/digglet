@@ -24,9 +24,10 @@ def dashboard():
 
     if credentials.access_token_expired:
         return flask.redirect(flask.url_for('oauth2callback'))
-
     else:
-        return render_template('dashboard.html')
+        user_profile = gmail.get_user_profile(credentials)
+
+        return render_template('dashboard.html', data={'email': user_profile['emailAddress']})
 
 
 @app.route('/oauth2callback')

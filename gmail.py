@@ -21,11 +21,24 @@ def get_auth_flow(redirect_uri):
 
     flow = client.flow_from_clientsecrets(
         'client_secrets.json',
-        scope='https://www.googleapis.com/auth/gmail.readonly',
+        scope=[
+            'https://www.googleapis.com/auth/gmail.readonly'
+        ],
         redirect_uri=redirect_uri)
     
     return flow
-    
+
+
+def get_user_profile(credentials):
+    """Gets basic account info on the logged in profile"""
+
+    http_auth = credentials.authorize(httplib2.Http())
+    service = discovery.build('gmail', 'v1', http=http_auth)
+
+    profile = service.users().getProfile(userId='me').execute()
+
+    return profile
+
 
 def get_messages(credentials, page_token=None):
     """Get a list of personal messages from the INBOX
